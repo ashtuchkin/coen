@@ -1,0 +1,16 @@
+{
+  "name": "coin-signer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Alexander Shtuchkin",
+  "license": "MIT",
+  "dependencies": {
+    "bip39": "^2.4.0",
+    "ethereumjs-tx": "^1.3.3",
+    "ethereumjs-util": "^5.1.2",
+    "hdkey": "^0.7.1",
+    "inquirer": "^3.3.0",
+    "scryptsy": "^2.0.0",
+    "uuid": "^3.1.0"
+  }
+}
