@@ -67,14 +67,14 @@ class Wallet {
             throw new Error('Unsupported cipher');
         }
 
-        const ciphertext = Buffer.concat([cipherStream.update(this.privKey), cipherStream.final()]);
-        const mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex')]));
+        const ciphertextBuf = Buffer.concat([cipherStream.update(this.privKey), cipherStream.final()]);
+        const mac = ethUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), ciphertextBuf]));
         return {
             version: 3,
             id: uuid.v4({random: uuidRandom}),
             address: this.getAddress().toString('hex'),
             crypto: {
-                ciphertext: ciphertext.toString('hex'),
+                ciphertext: ciphertextBuf.toString('hex'),
                 cipherparams: {
                     iv: iv.toString('hex')
                 },

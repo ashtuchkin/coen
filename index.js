@@ -26,6 +26,8 @@ addr = ethUtil.toChecksumAddress(addr.toString('hex'));
 console.log("Address: " + addr);
 
 var privateKey2 = parentKey.deriveChild(1).privateKey;
+
+key.privateExtendedKey (str) -> HDKey.fromExtendedKey()
 */
 
 require('./sign')();
