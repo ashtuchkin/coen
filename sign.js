@@ -3,9 +3,11 @@ const inquirer = require('inquirer'),
       hdkey = require('hdkey'),
       bip39 = require('bip39'),
       ethUtil = require('ethereumjs-util'),
-      etx = require('ethereumjs-tx'),
+      BN = ethUtil.BN,
+      EthTransaction = require('ethereumjs-tx'),
       Wallet = require('./wallet').Wallet,
-      BN = ethUtil.BN;
+      qrcode = require('qrcode'),
+      utils = require('./utils');
 
 module.exports = () => {
     return inquirer.prompt([{
@@ -63,7 +65,7 @@ module.exports = () => {
     }, {
         name: 'value',
         type: 'input',
-        message: 'Amount to send (mETH)',
+        message: 'Amount to send (ETH)',
     }, {
         name: 'gasLimit',
         type: 'input',
@@ -85,23 +87,24 @@ module.exports = () => {
         message: 'Data',
     }]).then(({wallet, targetAddress, value, gasLimit, gasPrice, nonce, data}) => {
 
-        var milliether = new BN('1000000000000000', 10);
-        
         // Sign.
-        var tx = {
-            nonce: +nonce,
-            gasPrice: +gasPrice, //sanitizeHex('04e3b29200'),
-            gasLimit: +gasLimit,
+        const microEther = new BN('1000000000000');        
+        const rawTx = {
+            nonce: new BN(nonce),
+            gasPrice: new BN(gasPrice),
+            gasLimit: new BN(gasLimit),
             to: targetAddress,
-            value: "0x"+milliether.muln(+value).toString(16), //sanitizeHex('0x4615 343e 73b9 0000'),
+            value: microEther.muln(+value * 1000000),  // BN only supports integers.
             data: data,
             chainId: 1,
         };
 
-        tx = new etx(tx);
+        const tx = new EthTransaction(rawTx);
         console.log("tx data: " + JSON.stringify(tx));
         
         tx.sign(wallet.getPrivateKey());
-        console.log("Transaction: 0x" + tx.serialize().toString('hex'));
+        const txStr = "0x" + tx.serialize().toString('hex');
+        console.log("Transaction: " + txStr);
+        console.log(utils.QRCodeToStringCompact(qrcode.create(txStr)));
     });
 };
