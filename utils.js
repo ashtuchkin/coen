@@ -47,7 +47,7 @@ exports.ethRequest = (method, ...params) => {
             params: params,
         },
         json: true,      
-    }).then(({result}) => result);
+    }).then(({result, error}) => error ? Promise.reject(error) : result);
 };
 
 function _deriveKeyV3(password, kdf, kdfparams, opts) {

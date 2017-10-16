@@ -46,6 +46,13 @@ program
     });
 
 program
+    .command('send-raw <raw tx>')
+    .description('create a wallet from extended public address')
+    .action((rawTx, options) => {
+        require('./commands/send-raw')(rawTx, options);
+    });
+
+program
     .command('*', null, {noHelp: true})
     .action(() => {
         program.help((str) => str + "\n");

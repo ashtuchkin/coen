@@ -16,7 +16,7 @@ module.exports = (walletPath, value, targetAddress, options) => {
         throw Error("Invalid amount to send.");
 
     if (options.data)
-        options.data = new Buffer(options.data, 'hex');
+        options.data = ethUtil.toBuffer(options.data);
     else
         options.data = "";
     

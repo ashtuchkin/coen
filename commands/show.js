@@ -31,10 +31,10 @@ module.exports = (walletPath, range, options) => {
                 requests = [].concat(
                     wallets.map((w) =>
                         ethRequest("eth_getBalance", w.wallet.getAddressString(), "latest")
-                            .then(result => w.balance = new BN(result).muln(1e6).div(etherToWei) / 1e6)),
+                            .then(result => w.balance = new BN(ethUtil.toBuffer(result)).muln(1e6).div(etherToWei) * 1e-6)),
                     wallets.map((w) =>
                         ethRequest("eth_getTransactionCount", w.wallet.getAddressString(), "latest")
-                            .then(result => w.nonce = +result))
+                            .then(result => w.nonce = new BN(ethUtil.toBuffer(result)).toNumber()))
                 );
             } else {
                 console.log("Offline mode; nonces and balances not available.");
