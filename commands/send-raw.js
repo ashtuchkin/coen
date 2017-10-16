@@ -44,7 +44,7 @@ module.exports = (rawTx, options) => {
         }]).then(({confirmation}) => {
             if (!confirmation) return;
             return ethRequest("eth_sendRawTransaction", rawTx)
-                .then((result) => console.log(`Success. Transaction hash: ${result}`))
+                .then((result) => console.log(`Success. Transaction: https://etherscan.io/tx/${result}`))
                 .catch((err) => {console.error("Error: "); console.error(err); });
         });
     });
