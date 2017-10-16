@@ -1,18 +1,25 @@
 {
-  "name": "coin-signer",
+  "name": "coen",
+  "description": "Command-line cryptocurrency wallet and offline signer",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Alexander Shtuchkin",
   "license": "MIT",
+  "bin": "./cli.js",
   "dependencies": {
     "bip39": "^2.4.0",
     "colors": "*",
+    "commander": "^2.11.0",
     "ethereumjs-tx": "^1.3.3",
     "ethereumjs-util": "^5.1.2",
     "hdkey": "^0.7.1",
     "inquirer": "^3.3.0",
+    "lodash": "^4.17.4",
     "qrcode": "^0.9.0",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5",
     "scryptsy": "^2.0.0",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "zxcvbn": "^4.4.2"
   }
 }
