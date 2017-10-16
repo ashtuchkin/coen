@@ -26,6 +26,8 @@ class Wallet {
         return (this.getPrivateKey() != null) ? this.getPrivateKey().toString('hex') : "";
     }
     getPrivateExtendedKey() {
+        if (!this.hdkey.chainCode)
+            throw new Error("Cannot get extended info from this wallet - it lacks information needed for derivation.");
         return this.hdkey.privateExtendedKey || "";
     }
 
@@ -42,6 +44,8 @@ class Wallet {
         return pubKey ? '0x' + this.getPublicKey().toString('hex') : "";
     }
     getPublicExtendedKey() {
+        if (!this.hdkey.chainCode)
+            throw new Error("Cannot get extended info from this wallet - it lacks information needed for derivation.");
         return this.hdkey.publicExtendedKey || "";
     }
 

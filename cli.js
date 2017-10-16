@@ -58,6 +58,9 @@ program
         program.help((str) => str + "\n");
     });
 
+// Show unhandled errors.
+process.on('unhandledRejection', r => console.error(r));
+
 program.parse(process.argv);
 if (!program.args.length)
     program.emit('command:*');

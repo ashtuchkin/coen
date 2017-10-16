@@ -14,7 +14,7 @@ module.exports = (walletPath, options) => {
 
     const canProceed = options.parent.allowOnline ? Promise.resolve(true) : utils.checkOffline();
 
-    canProceed.then((canProceed) => {
+    return canProceed.then((canProceed) => {
         if (!canProceed) {
             console.log("You're connected to internet. Please disconnect or supply --allow-online option.");
             return;
