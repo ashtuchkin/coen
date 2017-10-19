@@ -90,9 +90,9 @@ module.exports = (walletPath, options) => {
                     return "Passwords don't match";
                 return true;
             },    
-        }]).then(({mnemonicInput, strength, mnemonicPassword, derivationPath, walletPassword}) => {
+        }]).then(({mnemonicInput, mnemonicStrength, mnemonicPassword, derivationPath, walletPassword}) => {
             mnemonicInput = mnemonicInput.replace(/!$/, ""); // Strip "!" as an override mechanism.
-            const mnemonic = mnemonicInput || bip39.generateMnemonic(strength);
+            const mnemonic = mnemonicInput || bip39.generateMnemonic(+mnemonicStrength);
             if (!mnemonicInput) {
                 console.log("Generated mnemonic: " + mnemonic);
                 console.log("Be sure to write it down. This is the only time it's shown.");

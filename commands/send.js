@@ -35,8 +35,19 @@ module.exports = (walletPath, value, targetAddress, options) => {
             console.log("You're connected to internet. Please disconnect or supply --allow-online option.");
             return;
         }
-        
+
+        const checkDerivationDepth = (wallet) => 
+            wallet.getDepth() == 4 ? wallet :
+            inquirer.prompt([{
+                name: 'confirmDepth',
+                type: 'confirm',
+                message: `WARNING: Derivation depth is ${wallet.getDepth()}, the usual being 4, would you like to continue?`,
+            }]).then(({confirmDepth}) => 
+                confirmDepth ? wallet : Promise.reject(new Error("See you!"))
+            );
+
         return openWallet(walletPath)
+            .then(checkDerivationDepth)
             .then((wallet) =>
                 inquirer.prompt([{
                     name: 'gasPrice',

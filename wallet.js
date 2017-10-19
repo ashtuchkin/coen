@@ -73,6 +73,10 @@ class Wallet {
         return new Wallet(this.hdkey.deriveChild(idx + (isHardened ? HDKey.HARDENED_OFFSET : 0)));
     }
 
+    getDepth() {
+        return this.hdkey.depth;
+    }
+
     getV3Filename(timestamp) {
         const ts = timestamp ? new Date(timestamp) : new Date();
         return ['UTC--', ts.toJSON().replace(/:/g, '-'), '--', this.getAddress().toString('hex')].join('');
@@ -87,12 +91,8 @@ class Wallet {
         if (this.getPrivateKey())
             json.crypto = encodeCrypto(this.getPrivateKey(), password, opts);
 
-        if (opts.exportExtendedKey) {
-            if (this.getPrivateKey())
-                json.xpriv = encodeCrypto(cs.decode(this.getPrivateExtendedKey()), password, opts);
-            else
-                json.xpub = this.getPublicExtendedKey();
-        }
+        if (opts.exportExtendedKey)
+            json.xpub = this.getPublicExtendedKey();
 
         return json;
     }
@@ -102,13 +102,19 @@ class Wallet {
             throw new Error('Not a V3 wallet');
         }
 
-        if (json.xpriv) {
-            return Wallet.fromExtendedKey(cs.encode(decodeCrypto(json.xpriv, password)));
-        } else if (json.crypto) {
-            return new Wallet(ethUtil.setLength(decodeCrypto(json.crypto, password), 32));
-        } else if (json.xpub) {
+        const hdkey = json.xpub ? HDKey.fromExtendedKey(json.xpub) : new HDKey();
+        if (json.crypto)
+            hdkey.privateKey = ethUtil.setLength(decodeCrypto(json.crypto, password), 32)
+        return new Wallet(hdkey);
+    }
+
+    static fromV3AsPublic(json) {
+        if (json.version !== 3)
+            throw new Error('Not a V3 wallet');
+
+        if (json.xpub)
             return Wallet.fromExtendedKey(json.xpub);
-        }
+        // TODO: Return wallet with just address if no xpub key.
     }
 
     static fromMasterSeed(seedBuffer) {

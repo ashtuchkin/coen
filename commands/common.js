@@ -8,28 +8,33 @@ exports.openWallet = (walletPath) => {
     let derivationPath = walletPathParts[1];
 
     const walletJson = JSON.parse(fs.readFileSync(walletFileName, {encoding: 'utf8'}));
-    if (walletJson.version !== 3)
-        throw new Error("Invalid file format");
-
-    if (derivationPath) { // Check derivation path correct.
-        derivationPath = "m/" + derivationPath;
-        Wallet.fromMasterSeed("irrelevant").derive(derivationPath);
+    let pubWallet = Wallet.fromV3AsPublic(walletJson);
+    if (pubWallet && derivationPath) {  // Check derivation path correct.
+        pubWallet = pubWallet.derive(derivationPath);
+    }
+    if (pubWallet) {
+        console.log(`Opening wallet ${pubWallet.getChecksumAddressString()} (${walletPath})`)
+    } else {
+        console.log(`Opening wallet ${walletPath}`);
     }
     
     return inquirer.prompt([{
         name: 'walletPassword',
         type: 'password',
         message: 'Enter wallet password',
-        when: () => !walletJson.xpub,
+        when: () => !!walletJson.crypto,
         validate: (walletPassword, answers) => {
             answers.wallet = Wallet.fromV3(walletJson, walletPassword);
             return true;
         },
     }]).then(({wallet}) => {
-        wallet = wallet || Wallet.fromV3(walletJson, ""); // xpub case.
-        if (derivationPath)
-            wallet = wallet.derive(derivationPath);
-        console.log("Opened wallet " + wallet.getChecksumAddressString());
+        if (wallet) {
+            if (derivationPath)
+                wallet = wallet.derive(derivationPath);
+            console.log("Opened private key for wallet " + wallet.getChecksumAddressString());
+        } else {
+            wallet = pubWallet;
+        }
         return wallet;
     });
 };
